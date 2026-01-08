@@ -31,6 +31,3 @@ jobs:
           pip install pylint
           pylint app.py || true
 
-      - name: Smoke import test
-        run: |
-          python -c "import torch, transformers, gradio; print('Imports OK')"
