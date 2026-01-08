@@ -1,22 +1,32 @@
 from transformers import pipeline
 import gradio as gr
-import torch
 
+# Force TensorFlow + CPU
 summarizer = pipeline(
     "summarization",
     model="google-t5/t5-small",
-    framework="pt",   # <- force PyTorch
-    device=-1         # CPU
+    framework="tf"   # <- TensorFlow
 )
 
 def predict(text):
-    out = summarizer(text, max_length=120, min_length=30, do_sample=False)
-    return out[0]["summary_text"]
+    result = summarizer(
+        text,
+        max_length=120,
+        min_length=30,
+        do_sample=False,
+    )
+    return result[0]["summary_text"]
 
 demo = gr.Interface(
     fn=predict,
-    inputs=gr.Textbox(placeholder="Enter text to summarize...", lines=6),
-    outputs="text",
+    inputs=gr.Textbox(
+        placeholder="Enter text to summarize...",
+        lines=6,
+        label="Input text",
+    ),
+    outputs=gr.Textbox(label="Summary"),
+    title="TensorFlow Text Summarizer",
 )
 
-demo.launch()
+if __name__ == "__main__":
+    demo.launch()
